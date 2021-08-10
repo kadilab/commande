@@ -1,33 +1,32 @@
-import controlP5.*; //import ControlP5 library
-import processing.serial.*;
+import controlP5.*; //import ControlP5 library for create the user interface
+import processing.serial.*; //permet la communication via la voie serie
 
-Serial port;
+Serial port; //nom de port serie utiliser
 
-ControlP5 cp5; //create ControlP5 object
+ControlP5 cp5; //creation d'un objet ControlP5
 PFont font;
-Toggle btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13,btn14,btn15,btn16,btnall,btncon;
-DropdownList p1;
-Button btnref;
-boolean stat = false;
+Toggle btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13,btn14,btn15,btn16,btnall,btncon; //les interrupteur
+DropdownList p1;//la liste deroulante qui permet d'afficher le port serie disponnible sur la machine
+Button btnref; //bouton qui permet d'etablir la connexion
+boolean stat = false;//
 
 void setup(){ //same as arduino program
-  size(1270, 700);    //window size, (width, height)
+  size(1270, 700);    //window size, (width, height) //la taille de la fenetre
   printArray(Serial.list());   //prints all available serial ports
-  //port = new Serial(this, "COM3", 9600);  //i have connected arduino to com3, it would be different in linux and mac os
   //lets add buton to empty window
   cp5 = new ControlP5(this);
   font = createFont("calibri light bold", 20);    // custom fonts for buttons and title
   p1 = cp5.addDropdownList("Serial port",50,550,100,200);
-  btnref = cp5.addButton("Connect")     //"red" is the name of button
-    .setPosition(180, 550)  //x and y coordinates of upper left corner of button
-    .setSize(150, 20)      //(width, height)
+  btnref = cp5.addButton("Connect")     //creation du bouton connect 
+    .setPosition(180, 550)  //x et y les coordonnes du bouton dans notre interface
+    .setSize(150, 20)      //(width, height) //la taille du bouton
     .setFont(font)
   ;
   for(int i=0; i< Serial.list().length;i++)
 {
-    p1.addItem(Serial.list()[i],i);
+    p1.addItem(Serial.list()[i],i); //ajout des port serie disponible dans la liste deroulante
 }
-  btn1 = ibtn("LED1", 50, 70);
+  btn1 = ibtn("LED1", 50, 70); //creation des bouton de commande (NOM, X,Y)
   btn2 = ibtn("LED2", 200, 70);
   btn3 = ibtn("LED3", 350, 70);
   btn4 = ibtn("LED4", 500, 70);
@@ -44,7 +43,7 @@ void setup(){ //same as arduino program
   btn14 = ibtn("LED14", 800, 200);
   btn15 = ibtn("LED15", 950, 200);
   btn16 = ibtn("LED16", 1100, 200);
-  btnall = cp5.addToggle("Commande_All")     //"red" is the name of button
+  btnall = cp5.addToggle("Commande_All")     //outon de commande de toutes les leds
     .setPosition(50, 400)  //x and y coordinates of upper left corner of button
     .setSize(1170, 70)      //(width, height)
     .setFont(font)
@@ -52,40 +51,29 @@ void setup(){ //same as arduino program
  
 }
 
-void draw(){  //same as loop in arduino
+void draw(){  //c'est comme  le loop dans Arduino
 
-  background(0, 0 ,0); // background color of window (r, g, b) or (0 to 255)
+  background(0, 0 ,0); // couleur de fond de la fenetre
   
   //lets give title to our window
-  fill(0, 255, 0);               //text color (r, g, b)
+  fill(0, 255, 0);               //couleur du text du titre
   textFont(font);
   text("LED CONTROL", 600, 30);  // ("text", x coordinate, y coordinat)
 }
 
-void commande(String btn)
-{
- 
- port.write(btn);//envoi des commande vers l'arduino via le port serie 
-}
-
-//void controlEvent(ControlEvent theEvent) {
-// if(theEvent.isController()) { 
-//     print("control event from : "+theEvent.getController().getName());
-//     println(", value : "+theEvent.getController().getValue());
-// }
-//}
-//connect to the selected posrt
+//connexion avec le port serie
 void Connect()
 {
   try{
    port = new Serial(this,Serial.list()[int(p1.getValue())], 9600);
-   port.write('x'); 
+   port.write('x');//envoie d'un caractere pour voir si la communication fonction 
    println("connected");
   }catch(Exception e)
   {
      println("Echec de connexion");
   }
 }
+//commande de LED
 void LED1(ControlEvent theEvent)
 { 
   print(theEvent.getController().getName()+" : ");
@@ -305,7 +293,7 @@ void Commande_All(ControlEvent theEvent)
     println("off");
   }
 }
-
+//fonction qui me permet de cree les interrupteur
 Toggle ibtn(String btnName, float x, float y)
 {
 return cp5.addToggle(btnName)     //"nom de du buton"
